@@ -39,6 +39,7 @@ __all__ = [
     "create_keypoint_hflip_indices",
     "filter_empty_instances",
     "read_image",
+    "read_image_object",
 ]
 
 
@@ -593,3 +594,21 @@ build_transform_gen = build_augmentation
 """
 Alias for backward-compatibility.
 """
+
+# Customize
+def read_image_object(image, format=None):
+    """
+    Read an image into the given format.
+    Will apply rotation and flipping if the image has such exif information.
+
+    Args:
+        file_name (str): image file path
+        format (str): one of the supported image modes in PIL, or "BGR" or "YUV-BT.601".
+
+    Returns:
+        image (np.ndarray): an HWC image in the given format, which is 0-255, uint8 for
+            supported image modes in PIL or "BGR"; float (0-1 for Y) for YUV-BT.601.
+    """
+
+    image = _apply_exif_orientation(image)
+    return convert_PIL_to_numpy(image, format)
